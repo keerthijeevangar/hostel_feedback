@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Admin Dashboard</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body { margin: 0; font-family: "Segoe UI", sans-serif; }
+    .admin-bg {
+      min-height: 100vh;
+      background: url("/static/images/foodbg.png") center/cover no-repeat;
+      padding: 60px 0;
+    }
+    .admin-card {
+      max-width: 1100px;
+      margin: auto;
+      background: rgba(255,255,255,0.96);
+      border-radius: 14px;
+      padding: 30px;
+    }
+    .admin-section { margin-top: 25px; }
+  </style>
+</head>
+
+<body>
+<div class="admin-bg">
+  <div class="container">
+
+    <div class="text-center mb-4">
+      <h2 class="fw-bold">Admin Dashboard</h2>
+      <p class="text-muted">Hostel Food Feedback System</p>
+    </div>
+
+    <div class="admin-card shadow-lg">
+
+      <div class="text-center mb-4">
+        <button class="btn btn-success me-2" onclick="showSection('analytics')">📊 Analytics</button>
+        <button class="btn btn-primary me-2" onclick="showSection('records')">📄 Records</button>
+        <button class="btn btn-warning" onclick="showSection('actions')">⚙ Actions</button>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div id="analytics" class="admin-section d-none">
+        <div class="row g-4">
+          <div class="col-md-6"><canvas id="likesChart"></canvas></div>
+          <div class="col-md-6"><canvas id="dislikesChart"></canvas></div>
+        </div>
+        <div class="mt-4"><canvas id="dayChart"></canvas></div>
+      </div>
+
+      <!-- RECORDS -->
+      <div id="records" class="admin-section d-none">
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+              <tr>
+                <th>Name</th><th>Email</th><th>Day</th><th>Food</th>
+                <th>Feedback</th><th>Comments</th><th>Time</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div id="actions" class="admin-section d-none">
+        <a href="/export" class="btn btn-success w-100 mb-2">⬇ Download CSV</a>
+        <a href="/api/records" target="_blank" class="btn btn-secondary w-100">👁 View Records JSON</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+let analyticsLoaded = false;
+
+function showSection(section) {
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.add('d-none'));
+  document.getElementById(section).classList.remove('d-none');
+
+  if (section === 'analytics' && !analyticsLoaded) {
+    loadAnalytics(); analyticsLoaded = true;
+  }
+  if (section === 'records') loadRecords();
+}
+
+async function loadAnalytics() {
+  const res = await fetch('/api/summary');
+  const data = await res.json();
+
+  new Chart(likesChart, {
+    type: 'bar',
+    data: { labels: Object.keys(data.likes),
+      datasets: [{ label:'Likes', data:Object.values(data.likes), backgroundColor:'#28a745' }]
+    }
+  });
+
+  new Chart(dislikesChart, {
+    type: 'bar',
+    data: { labels: Object.keys(data.dislikes),
+      datasets: [{ label:'Dislikes', data:Object.values(data.dislikes), backgroundColor:'#dc3545' }]
+    }
+  });
+
+  const days = Object.keys(data.by_day);
+  new Chart(dayChart, {
+    type: 'bar',
+    data: {
+      labels: days,
+      datasets: [
+        { label:'Like', data: days.map(d=>data.by_day[d].Like), backgroundColor:'#28a745' },
+        { label:'Dislike', data: days.map(d=>data.by_day[d].Dislike), backgroundColor:'#dc3545' }
+      ]
+    }
+  });
+}
+
+async function loadRecords() {
+  const res = await fetch('/api/records');
+  const data = await res.json();
+  const tbody = document.getElementById('recordsTable');
+  tbody.innerHTML = '';
+
+  data.forEach(r => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${r.name}</td>
+        <td>${r.email}</td>
+        <td>${r.day_of_week}</td>
+        <td>${r.food_item}</td>
+        <td>${r.feedback}</td>
+        <td>${r.comments || ''}</td>
+        <td>${r.timestamp}</td>
+        <td>
+          <button class="btn btn-sm btn-danger" onclick="deleteRecord(${r.id})">
+            Delete
+          </button>
+        </td>
+      </tr>`;
+  });
+}
+
+async function deleteRecord(id) {
+  if (!confirm("Delete this record?")) return;
+  await fetch(`/api/delete/${id}`, { method: 'DELETE' });
+  loadRecords();
+}
+</script>
+
+</body>
+</html>

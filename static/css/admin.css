@@ -1,0 +1,22 @@
+.admin-bg {
+  min-height: 100vh;
+  background: url("../images/foodbg.png") no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* TOP BAR ONLY */
+.control-bar {
+  background: rgba(255,255,255,0.95);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+/* CONTENT AREA – NO SIDE CARD */
+.content-area {
+  background: rgba(255,255,255,0.95);
+  border-radius: 16px;
+  padding: 25px;
+}

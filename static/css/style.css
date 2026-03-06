@@ -1,0 +1,98 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* FULL BACKGROUND */
+.page {
+  min-height: 100vh;
+  width: 100%;
+
+  background-image: url("/static/images/foodbg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* FORM (NO WHITE BOX) */
+.feedback-form {
+  width: 600px;            /* expands to yellow area */
+  padding: 20px 30px;
+
+  background: transparent; /* no white box */
+}
+
+/* TITLE */
+.feedback-form h3 {
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+/* LABELS */
+.feedback-form label {
+  display: block;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+/* INPUTS – GLASS EFFECT */
+.feedback-form input,
+.feedback-form select,
+.feedback-form textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 4px;
+
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 6px;
+}
+
+/* BUTTON – KERCHIEF GREEN */
+.feedback-form button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 10px;
+
+  background-color: #6fbf73;
+  color: white;
+
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+
+  cursor: pointer;
+}
+
+.feedback-form button:hover {
+  background-color: #5aaa5f;
+}
+
+/* SUCCESS MESSAGE */
+.success-msg {
+  background: rgba(111, 191, 115, 0.9);
+  color: white;
+  padding: 10px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* THANK YOU PAGE BOX */
+.thankyou-box {
+  background: rgba(255, 255, 255, 0.92);
+  padding: 30px 40px;
+  border-radius: 14px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
